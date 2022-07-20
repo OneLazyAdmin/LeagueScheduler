@@ -1,0 +1,65 @@
+Determining if the include file pthread.h exists failed with the following output:
+Change Dir: C:/Users/Tassilo/Documents/Übungen/Python/Projekte/LeagueScheduler/build-ui-Desktop_Qt_6_3_1_MinGW_64_bit-Debug/CMakeFiles/CMakeTmp
+
+Run Build Command(s):D:/Programme/Qt/Tools/Ninja/ninja.exe cmTC_c402b && ninja: error: 'C:/Users/Tassilo/Documents/├£bungen/Python/Projekte/LeagueScheduler/build-ui-Desktop_Qt_6_3_1_MinGW_64_bit-Debug/CMakeFiles/CMakeTmp/CheckIncludeFile.cxx', needed by 'CMakeFiles/cmTC_c402b.dir/CheckIncludeFile.cxx.obj', missing and no known rule to make it
+
+
+
+Performing C++ SOURCE FILE Test HAVE_STDATOMIC failed with the following output:
+Change Dir: C:/Users/Tassilo/Documents/Übungen/Python/Projekte/LeagueScheduler/build-ui-Desktop_Qt_6_3_1_MinGW_64_bit-Debug/CMakeFiles/CMakeTmp
+
+Run Build Command(s):D:/Programme/Qt/Tools/Ninja/ninja.exe cmTC_f737b && ninja: error: 'C:/Users/Tassilo/Documents/├£bungen/Python/Projekte/LeagueScheduler/build-ui-Desktop_Qt_6_3_1_MinGW_64_bit-Debug/CMakeFiles/CMakeTmp/src.cxx', needed by 'CMakeFiles/cmTC_f737b.dir/src.cxx.obj', missing and no known rule to make it
+
+
+Source file was:
+#include <atomic>
+#include <cstdint>
+
+int main(int, char **)
+{
+    volatile std::atomic<char>    size_1;
+    volatile std::atomic<short>   size_2;
+    volatile std::atomic<int>     size_4;
+    volatile std::atomic<int64_t> size_8;
+
+    ++size_1;
+    ++size_2;
+    ++size_4;
+    ++size_8;
+
+    (void)size_1.load(std::memory_order_relaxed);
+    (void)size_2.load(std::memory_order_relaxed);
+    (void)size_4.load(std::memory_order_relaxed);
+    (void)size_8.load(std::memory_order_relaxed);
+
+    return 0;
+}
+Performing C++ SOURCE FILE Test HAVE_STDATOMIC_WITH_LIB failed with the following output:
+Change Dir: C:/Users/Tassilo/Documents/Übungen/Python/Projekte/LeagueScheduler/build-ui-Desktop_Qt_6_3_1_MinGW_64_bit-Debug/CMakeFiles/CMakeTmp
+
+Run Build Command(s):D:/Programme/Qt/Tools/Ninja/ninja.exe cmTC_312a8 && ninja: error: 'C:/Users/Tassilo/Documents/├£bungen/Python/Projekte/LeagueScheduler/build-ui-Desktop_Qt_6_3_1_MinGW_64_bit-Debug/CMakeFiles/CMakeTmp/src.cxx', needed by 'CMakeFiles/cmTC_312a8.dir/src.cxx.obj', missing and no known rule to make it
+
+
+Source file was:
+#include <atomic>
+#include <cstdint>
+
+int main(int, char **)
+{
+    volatile std::atomic<char>    size_1;
+    volatile std::atomic<short>   size_2;
+    volatile std::atomic<int>     size_4;
+    volatile std::atomic<int64_t> size_8;
+
+    ++size_1;
+    ++size_2;
+    ++size_4;
+    ++size_8;
+
+    (void)size_1.load(std::memory_order_relaxed);
+    (void)size_2.load(std::memory_order_relaxed);
+    (void)size_4.load(std::memory_order_relaxed);
+    (void)size_8.load(std::memory_order_relaxed);
+
+    return 0;
+}

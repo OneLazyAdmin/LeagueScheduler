@@ -1,0 +1,79 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-8616b05f45af5aacbaf3.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "ui",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "ui::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ui-Debug-b5b2de357f84d3f813d8.json",
+					"name" : "ui",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "ui_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ui_autogen-Debug-f5a3dd8cd46adcefe6f0.json",
+					"name" : "ui_autogen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "ui_autogen_timestamp_deps::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ui_autogen_timestamp_deps-Debug-740cdac1a9180b37abad.json",
+					"name" : "ui_autogen_timestamp_deps",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/Tassilo/Documents/\u00dcbungen/Python/Projekte/LeagueScheduler/build-ui-Desktop_Qt_6_3_1_MinGW_64_bit-Debug",
+		"source" : "C:/Users/Tassilo/Documents/\u00dcbungen/Python/Projekte/LeagueScheduler/ui"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 4
+	}
+}
