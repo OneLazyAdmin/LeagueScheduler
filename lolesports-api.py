@@ -36,26 +36,26 @@ def get_schedule():
     my_events = data["data"]["schedule"]["events"]
     schedule = []
     for n_event in my_events:
-        # if n_event["blockName"] =='Week 6':
-        start_time = n_event["startTime"].split("T")[1].split("Z")[0]
-        week = n_event["blockName"].split(" ")[1]
-        print(week)
-        # print(n_event["match"]["teams"])
-        team1 = n_event["match"]["teams"][0]["name"]
-        team2 = n_event["match"]["teams"][1]["name"]
-        result = n_event["match"]["teams"][0]["result"]["outcome"]
-        if result == "win":
-            winner = team1
-        elif result == "loss":
-            winner = team2
-        elif result is None:
-            winner = "TBD"
-        match = team1 + " vs. " + team2
-        # print(team1 + " vs. " + team2)
-        print(winner)
-        temp = {"week": week, "match": match, "winner": winner, "startTime": start_time}
-        schedule.append(temp)
+        #if n_event["blockName"] =='Week 10':
+            start_time = n_event["startTime"].split("T")[1].split("Z")[0]
+            week = n_event["blockName"].split(" ")[1]
+            print(week)
+            # print(n_event["match"]["teams"])
+            team1 = n_event["match"]["teams"][0]["name"]
+            team2 = n_event["match"]["teams"][1]["name"]
+            result = n_event["match"]["teams"][0]["result"]["outcome"]
+            if result == "win":
+                winner = team1
+            elif result == "loss":
+                winner = team2
+            elif result is None:
+                winner = "TBD"
+            match = team1 + " vs. " + team2
+            # print(team1 + " vs. " + team2)
+            print(winner)
+            temp = {"week": week, "match": match, "winner": winner, "startTime": start_time}
+            schedule.append(temp)
     print(schedule)
-
+    print(schedule_pretty)
 
 get_schedule()
