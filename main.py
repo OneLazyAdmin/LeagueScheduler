@@ -12,6 +12,8 @@ from PyQt6.QtGui import QPixmap, QImage, QIcon
 # non-changing variable
 apikey = '0TvQnueqKa5mxJntVWt0w4LpLfEkrV1Ta8rQBb9Z'
 schedule = []
+leagues_list = []
+leagues_list_only_names = []
 app = QtWidgets.QApplication(sys.argv)
 
 
@@ -25,6 +27,33 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.get_schedule.clicked.connect(self.get_schedule)
         self.ui.timezone.addItems(pytz.all_timezones)
         self.ui.get_timeoffset.clicked.connect(self.calculate_timezone)
+        self.ui.tabWidget.setCurrentIndex(0)
+        self.ui.show_spoilers.clicked.connect(self.show_spoilers)
+        self.ui.get_leagues.clicked.connect(self.get_leagues)
+
+    def get_leagues(self):
+        url = "https://esports-api.lolesports.com/persisted/gw/getLeagues?hl=en-GB"
+        payload = {}
+        headers = {'hl': 'en-US', 'x-api-key': apikey}
+        response = (requests.get(url, headers=headers, data=payload))
+
+
+        print(response.content)
+        data = response.json()
+        print(data)
+        my_leagues = data["data"]["leagues"]
+
+        for league in my_leagues:
+            print(league["id"])
+            print(league["name"])
+            print(league["image"])
+            temp = {"id": league["id"], "name": league["name"], "image": league["image"]}
+            leagues_list.append(temp)
+            leagues_list_only_names.append(league["name"])
+        leagues_list_only_names.sort()
+        for league in leagues_list_only_names:
+            self.ui.chosen_league_combo.addItem(league)
+        return leagues_list
 
     def calculate_timezone(self):
         timezone_offset = datetime.datetime.now(
@@ -35,22 +64,30 @@ class MainWindow(QtWidgets.QMainWindow):
     def calculate_day_of_week(self, start_date):
         day_of_week = start_date.strftime("%A")
         return day_of_week
-
+    def show_spoilers(self):
+        self.ui.schedule_table.showColumn(3)
+        self.ui.schedule_table.showColumn(4)
     def get_schedule(self):
-        pixmap = QPixmap("Nami.png")
-        print(pixmap)
-        self.ui.picture_label.setPixmap(pixmap)
-        self.ui.picture_label.show()
+        #pixmap = QPixmap("Nami.png")
+        #print(pixmap)
+        #self.ui.picture_label.setPixmap(pixmap)
+        #self.ui.picture_label.show()
         schedule.clear()
         self.ui.schedule_table.setRowCount(0)
-        url = "https://esports-api.lolesports.com/persisted/gw/getSchedule?hl=en-GB&leagueId=98767991302996019"
+        #if self.ui.chosen_league_combo.currentText() is None:
+        #    self.ui.chosen_league_combo.addItem("LEC")
+        #    self.ui.chosen_league_combo.setCurrentText()
+        chosen_league = self.ui.chosen_league_combo.currentText()
+        for d in leagues_list:
+            if d['name'] == chosen_league:
+                league_id = d['id']
+        url = "https://esports-api.lolesports.com/persisted/gw/getSchedule?hl=en-GB&leagueId=" + league_id
         payload = {}
         headers = {'hl': 'en-US', 'x-api-key': '0TvQnueqKa5mxJntVWt0w4LpLfEkrV1Ta8rQBb9Z'}
-        chosen_league = self.ui.chosen_league.currentText()
-        chosen_week = 'Week ' + str(self.ui.chosen_week.value())
-        print(chosen_week)
         response = (requests.get(url, headers=headers, data=payload))
         data = response.json()
+        chosen_week = 'Week ' + str(self.ui.chosen_week.value())
+        print(chosen_week)
         schedule_pretty = json.dumps(data, indent=4)
         schedule_file = json.dumps(data)
         print(data)
@@ -101,7 +138,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     icon = QIcon(pixmap)
                     icon_table = QtWidgets.QTableWidgetItem()
                     icon_table.setIcon(icon)
-                elif result is None:
+                else:
                     winner = "TBD"
                     pixmap = QPixmap("Nami.png")
                     icon = QIcon(pixmap)
@@ -115,6 +152,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         "winner": winner, "week": week, "picture": icon_table}
                 print(temp)
                 schedule.append(temp)
+
         print(schedule)
         print(schedule[0])
         counter = 0
@@ -127,10 +165,11 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.schedule_table.setItem(counter, 2, QtWidgets.QTableWidgetItem(item["match"]))
             self.ui.schedule_table.setItem(counter, 3, QtWidgets.QTableWidgetItem(item["winner"]))
             self.ui.schedule_table.setItem(counter, 4, QtWidgets.QTableWidgetItem(item["picture"]))
-            self.ui.schedule_table.item(counter, 4).setBackground(QtGui.QColor(0,0,0))
+            self.ui.schedule_table.item(counter, 4).setBackground(QtGui.QColor(0,100,0))
+            self.ui.schedule_table.hideColumn(3)
+            self.ui.schedule_table.hideColumn(4)
             counter = counter + 1
-        self.ui.schedule_table.resizeColumnToContents(2)
-
+        self.ui.schedule_table.resizeColumnsToContents()
 
 window = MainWindow()
 window.show()
