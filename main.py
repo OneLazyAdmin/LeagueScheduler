@@ -6,6 +6,8 @@ import timedelta
 import pytz
 from qtpy import QtWidgets
 from ui.mainwindow import Ui_MainWindow
+from PyQt6 import QtGui
+from PyQt6.QtGui import QPixmap, QImage, QIcon
 
 # non-changing variable
 apikey = '0TvQnueqKa5mxJntVWt0w4LpLfEkrV1Ta8rQBb9Z'
@@ -25,14 +27,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.get_timeoffset.clicked.connect(self.calculate_timezone)
 
     def calculate_timezone(self):
-        timezone_offset = datetime.datetime.now(pytz.timezone(self.ui.timezone.currentText())).utcoffset().total_seconds()/60/60
+        timezone_offset = datetime.datetime.now(
+            pytz.timezone(self.ui.timezone.currentText())).utcoffset().total_seconds() / 60 / 60
         print(timezone_offset)
         return timezone_offset
-    def calculate_day_of_week(self,start_date):
+
+    def calculate_day_of_week(self, start_date):
         day_of_week = start_date.strftime("%A")
         return day_of_week
 
     def get_schedule(self):
+        pixmap = QPixmap("Nami.png")
+        print(pixmap)
+        self.ui.picture_label.setPixmap(pixmap)
+        self.ui.picture_label.show()
         schedule.clear()
         self.ui.schedule_table.setRowCount(0)
         url = "https://esports-api.lolesports.com/persisted/gw/getSchedule?hl=en-GB&leagueId=98767991302996019"
@@ -51,17 +59,17 @@ class MainWindow(QtWidgets.QMainWindow):
         for n_event in my_events:
             if n_event["blockName"] == chosen_week:
                 print(n_event)
-                #start_time = n_event["startTime"].split("T")[1].split("Z")[0]
-                #print(start_time)
-                start_timestamp = datetime.datetime.strptime((n_event["startTime"].replace("T", " ").split("Z")[0]), "%Y-%m-%d %H:%M:%S")
+                # start_time = n_event["startTime"].split("T")[1].split("Z")[0]
+                # print(start_time)
+                start_timestamp = datetime.datetime.strptime((n_event["startTime"].replace("T", " ").split("Z")[0]),
+                                                             "%Y-%m-%d %H:%M:%S")
                 timezone_offset = datetime.timedelta(hours=self.calculate_timezone())
                 start_timestamp = start_timestamp + timezone_offset
                 start_time = start_timestamp.time()
                 print(start_time)
-                start_date = datetime.datetime.strptime((n_event["startTime"].split("T")[0].replace("-", "/")),\
+                start_date = datetime.datetime.strptime((n_event["startTime"].split("T")[0].replace("-", "/")),
                                                         "%Y/%m/%d").strftime("%d.%m.%Y")
                 day_of_week = self.calculate_day_of_week(start_timestamp)
-
 
                 print(start_date)
                 week = n_event["blockName"].split(" ")[1]
@@ -75,15 +83,36 @@ class MainWindow(QtWidgets.QMainWindow):
                 print(result)
                 if result == "win":
                     winner = team1
+                    f = open('image.png', 'wb')
+                    url_logo = n_event["match"]["teams"][0]["image"]
+                    f.write(requests.get(url_logo).content)
+                    f.close()
+                    pixmap = QPixmap("image.png")
+                    icon = QIcon(pixmap)
+                    icon_table = QtWidgets.QTableWidgetItem()
+                    icon_table.setIcon(icon)
                 elif result == "loss":
                     winner = team2
+                    f = open('image.png', 'wb')
+                    url_logo = n_event["match"]["teams"][1]["image"]
+                    f.write(requests.get(url_logo).content)
+                    f.close()
+                    pixmap = QPixmap("image.png")
+                    icon = QIcon(pixmap)
+                    icon_table = QtWidgets.QTableWidgetItem()
+                    icon_table.setIcon(icon)
                 elif result is None:
                     winner = "TBD"
+                    pixmap = QPixmap("Nami.png")
+                    icon = QIcon(pixmap)
+                    icon_table = QtWidgets.QTableWidgetItem()
+                    icon_table.setIcon(icon)
                 print(winner)
                 match = team1 + " vs. " + team2
                 print(match)
-                temp = {"startDate": day_of_week +", " + start_date, "startTime": str(start_time) + " (UTC + " + str(timezone_offset) + ")", "match": match,\
-                        "winner": winner, "week": week}
+                temp = {"startDate": day_of_week + ", " + start_date,
+                        "startTime": str(start_time) + " (UTC + " + str(timezone_offset) + ")", "match": match, \
+                        "winner": winner, "week": week, "picture": icon_table}
                 print(temp)
                 schedule.append(temp)
         print(schedule)
@@ -97,6 +126,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.schedule_table.setItem(counter, 1, QtWidgets.QTableWidgetItem(item["startTime"]))
             self.ui.schedule_table.setItem(counter, 2, QtWidgets.QTableWidgetItem(item["match"]))
             self.ui.schedule_table.setItem(counter, 3, QtWidgets.QTableWidgetItem(item["winner"]))
+            self.ui.schedule_table.setItem(counter, 4, QtWidgets.QTableWidgetItem(item["picture"]))
+            self.ui.schedule_table.item(counter, 4).setBackground(QtGui.QColor(0,0,0))
             counter = counter + 1
         self.ui.schedule_table.resizeColumnToContents(2)
 
