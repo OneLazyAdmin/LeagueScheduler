@@ -57,21 +57,14 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="chosen_week_title">
+           <widget class="QLabel" name="chosen_block_title">
             <property name="text">
              <string>Block</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QSpinBox" name="chosen_week">
-            <property name="minimum">
-             <number>1</number>
-            </property>
-            <property name="maximum">
-             <number>8</number>
-            </property>
-           </widget>
+           <widget class="QComboBox" name="chosen_block"/>
           </item>
           <item>
            <widget class="QPushButton" name="get_schedule">

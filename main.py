@@ -14,6 +14,8 @@ apikey = '0TvQnueqKa5mxJntVWt0w4LpLfEkrV1Ta8rQBb9Z'
 schedule = []
 leagues_list = []
 leagues_list_only_names = []
+block_names = set()
+league_id = ""
 app = QtWidgets.QApplication(sys.argv)
 
 
@@ -53,7 +55,26 @@ class MainWindow(QtWidgets.QMainWindow):
         leagues_list_only_names.sort()
         for league in leagues_list_only_names:
             self.ui.chosen_league_combo.addItem(league)
+
+        self.ui.chosen_league_combo.currentTextChanged.connect(self.get_block)
         return leagues_list
+    def get_block(self):
+        block_names.clear()
+        self.ui.chosen_block.clear()
+        chosen_league = self.ui.chosen_league_combo.currentText()
+        for d in leagues_list:
+            if d['name'] == chosen_league:
+                league_id = d['id']
+        url = "https://esports-api.lolesports.com/persisted/gw/getSchedule?hl=en-GB&leagueId=" + league_id
+        payload = {}
+        headers = {'hl': 'en-US', 'x-api-key': '0TvQnueqKa5mxJntVWt0w4LpLfEkrV1Ta8rQBb9Z'}
+        response = (requests.get(url, headers=headers, data=payload))
+        data = response.json()
+        my_events = data["data"]["schedule"]["events"]
+        for n_event in my_events:
+            block_names.add(n_event["blockName"])
+        self.ui.chosen_block.addItems(block_names)
+        return data
 
     def calculate_timezone(self):
         timezone_offset = datetime.datetime.now(
@@ -74,9 +95,6 @@ class MainWindow(QtWidgets.QMainWindow):
         #self.ui.picture_label.show()
         schedule.clear()
         self.ui.schedule_table.setRowCount(0)
-        #if self.ui.chosen_league_combo.currentText() is None:
-        #    self.ui.chosen_league_combo.addItem("LEC")
-        #    self.ui.chosen_league_combo.setCurrentText()
         chosen_league = self.ui.chosen_league_combo.currentText()
         for d in leagues_list:
             if d['name'] == chosen_league:
@@ -86,15 +104,15 @@ class MainWindow(QtWidgets.QMainWindow):
         headers = {'hl': 'en-US', 'x-api-key': '0TvQnueqKa5mxJntVWt0w4LpLfEkrV1Ta8rQBb9Z'}
         response = (requests.get(url, headers=headers, data=payload))
         data = response.json()
-        chosen_week = 'Week ' + str(self.ui.chosen_week.value())
-        print(chosen_week)
+        my_events = data["data"]["schedule"]["events"]
+        chosen_block = self.ui.chosen_block.currentText()
+        print(chosen_block)
         schedule_pretty = json.dumps(data, indent=4)
         schedule_file = json.dumps(data)
         print(data)
         self.ui.timezone_title.pixmap()
-        my_events = data["data"]["schedule"]["events"]
         for n_event in my_events:
-            if n_event["blockName"] == chosen_week:
+            if n_event["blockName"] == chosen_block:
                 print(n_event)
                 # start_time = n_event["startTime"].split("T")[1].split("Z")[0]
                 # print(start_time)
@@ -109,8 +127,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 day_of_week = self.calculate_day_of_week(start_timestamp)
 
                 print(start_date)
-                week = n_event["blockName"].split(" ")[1]
-                print(week)
+                week = n_event["blockName"]
+                #print(week)
                 # print(n_event["match"]["teams"])
                 team1 = n_event["match"]["teams"][0]["name"]
                 print(team1)
@@ -170,6 +188,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.schedule_table.hideColumn(4)
             counter = counter + 1
         self.ui.schedule_table.resizeColumnsToContents()
+        print(block_names)
 
 window = MainWindow()
 window.show()
