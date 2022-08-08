@@ -8,13 +8,14 @@ from qtpy import QtWidgets
 from ui.mainwindow import Ui_MainWindow
 from PyQt6 import QtGui
 from PyQt6.QtGui import QPixmap, QImage, QIcon
-
+from PyQt6.QtWidgets import QLineEdit
 # non-changing variable
 apikey = '0TvQnueqKa5mxJntVWt0w4LpLfEkrV1Ta8rQBb9Z'
 schedule = []
 leagues_list = []
 leagues_list_only_names = []
 block_names = set()
+#upcoming_week = ""
 league_id = ""
 app = QtWidgets.QApplication(sys.argv)
 
@@ -71,9 +72,32 @@ class MainWindow(QtWidgets.QMainWindow):
         response = (requests.get(url, headers=headers, data=payload))
         data = response.json()
         my_events = data["data"]["schedule"]["events"]
+        upcoming_week_found = False
         for n_event in my_events:
+            result = n_event["match"]["teams"][0]["result"]["outcome"]
+            print(result)
+            while not upcoming_week_found:
+                if result is None:
+                    upcoming_week = n_event["blockName"]
+                    print("found_upcoming_week")
+                    print(upcoming_week)
+                    upcoming_week_found = True
+                else:
+                    break
+
             block_names.add(n_event["blockName"])
         self.ui.chosen_block.addItems(block_names)
+        ###carry on here ###
+        ###carry on here ###
+        ###carry on here ###
+
+
+        upcoming_week_index = self.ui.chosen_block.findText(upcoming_week)
+        self.ui.chosen_block.setCurrentIndex(upcoming_week_index)
+        self.ui.chosen_block.setItemText(upcoming_week_index, str(self.ui.chosen_block.currentText()) + " (upcoming block)")
+
+        self.ui.chosen_block.lineEdit()
+        print(upcoming_week_found)
         return data
 
     def calculate_timezone(self):
@@ -89,10 +113,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.schedule_table.showColumn(3)
         self.ui.schedule_table.showColumn(4)
     def get_schedule(self):
-        #pixmap = QPixmap("Nami.png")
-        #print(pixmap)
-        #self.ui.picture_label.setPixmap(pixmap)
-        #self.ui.picture_label.show()
+        pixmap = QPixmap("Nami.png")
+        print(pixmap)
+        self.ui.picture_label.setPixmap(pixmap)
+        self.ui.picture_label.show()
         schedule.clear()
         self.ui.schedule_table.setRowCount(0)
         chosen_league = self.ui.chosen_league_combo.currentText()
@@ -112,7 +136,7 @@ class MainWindow(QtWidgets.QMainWindow):
         print(data)
         self.ui.timezone_title.pixmap()
         for n_event in my_events:
-            if n_event["blockName"] == chosen_block:
+            if n_event["blockName"] in chosen_block:
                 print(n_event)
                 # start_time = n_event["startTime"].split("T")[1].split("Z")[0]
                 # print(start_time)
