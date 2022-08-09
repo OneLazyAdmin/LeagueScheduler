@@ -14,7 +14,9 @@ apikey = '0TvQnueqKa5mxJntVWt0w4LpLfEkrV1Ta8rQBb9Z'
 schedule = []
 leagues_list = []
 leagues_list_only_names = []
-block_names = set()
+block_names_set = set()
+block_names_list = []
+block_names_dictionary = {}
 #upcoming_week = ""
 league_id = ""
 app = QtWidgets.QApplication(sys.argv)
@@ -60,7 +62,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.chosen_league_combo.currentTextChanged.connect(self.get_block)
         return leagues_list
     def get_block(self):
-        block_names.clear()
+        block_names_set.clear()
+        block_names_list.clear()
         self.ui.chosen_block.clear()
         chosen_league = self.ui.chosen_league_combo.currentText()
         for d in leagues_list:
@@ -85,8 +88,16 @@ class MainWindow(QtWidgets.QMainWindow):
                 else:
                     break
 
-            block_names.add(n_event["blockName"])
-        self.ui.chosen_block.addItems(block_names)
+            #block_names_set.add(n_event["blockName"] + ", " + str(datetime.datetime.strptime((n_event["startTime"].split("T")[0].replace("-", "/")),
+            #                                            "%Y/%m/%d").strftime("%d.%m.%Y")))
+            temp_date = datetime.datetime.strptime((n_event["startTime"].split("T")[0].replace("-", "/")),"%Y/%m/%d").strftime("%d.%m.%Y")
+                        #datetime.datetime.strptime((n_event["startTime"].split("T")[0].replace("-", "/")),"%Y/%m/%d").strftime("%d.%m.%Y")
+            block_names_dictionary.update({"BlockName": n_event["blockName"], "date": temp_date})
+            block_names_list.append(block_names_dictionary)
+        block_names_list_sorted = sorted(block_names_list, key=lambda ff: ff['date'])
+        for i in block_names_list_sorted:
+            temp_string = str(block_names_list_sorted[0]["BlockName"]) + str(block_names_list_sorted[0]["date"])
+            self.ui.chosen_block.addItem(temp_string)
         ###carry on here ###
         ###carry on here ###
         ###carry on here ###
@@ -212,7 +223,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.schedule_table.hideColumn(4)
             counter = counter + 1
         self.ui.schedule_table.resizeColumnsToContents()
-        print(block_names)
+        print(block_names_list)
 
 window = MainWindow()
 window.show()
