@@ -91,13 +91,13 @@ class MainWindow(QtWidgets.QMainWindow):
         ###carry on here ###
         ###carry on here ###
 
+        if upcoming_week_found:
+            upcoming_week_index = self.ui.chosen_block.findText(upcoming_week)
+            self.ui.chosen_block.setCurrentIndex(upcoming_week_index)
+            self.ui.chosen_block.setItemText(upcoming_week_index, str(self.ui.chosen_block.currentText()) + " (upcoming block)")
 
-        upcoming_week_index = self.ui.chosen_block.findText(upcoming_week)
-        self.ui.chosen_block.setCurrentIndex(upcoming_week_index)
-        self.ui.chosen_block.setItemText(upcoming_week_index, str(self.ui.chosen_block.currentText()) + " (upcoming block)")
-
-        self.ui.chosen_block.lineEdit()
-        print(upcoming_week_found)
+        #self.ui.chosen_block.lineEdit()
+        #print(upcoming_week_found)
         return data
 
     def calculate_timezone(self):
