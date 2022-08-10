@@ -1,4 +1,6 @@
 import sys
+import time
+
 import requests
 import json
 import datetime
@@ -6,7 +8,7 @@ import timedelta
 import pytz
 from qtpy import QtWidgets
 from ui.mainwindow import Ui_MainWindow
-from PyQt6 import QtGui
+from PyQt6 import QtGui, QtCore
 from PyQt6.QtGui import QPixmap, QImage, QIcon
 from PyQt6.QtWidgets import QLineEdit
 # non-changing variable
@@ -76,9 +78,17 @@ class MainWindow(QtWidgets.QMainWindow):
         data = response.json()
         my_events = data["data"]["schedule"]["events"]
         upcoming_week_found = False
+        #for n_event in my_events:
+        #    print(n_event)
+
         for n_event in my_events:
+            print(n_event)
+            #if "outcome" in n_event:
+            #    result = n_event["match"]["teams"][0]["result"]["outcome"]
+            #else:
+            #    result = n_event["match"]["teams"][0]["result"]
             result = n_event["match"]["teams"][0]["result"]["outcome"]
-            print(result)
+            print("HAAAAAAAAAAALOOOOOOOOOOOO" + str(result))
             while not upcoming_week_found:
                 if result is None:
                     upcoming_week = n_event["blockName"]
@@ -92,18 +102,20 @@ class MainWindow(QtWidgets.QMainWindow):
             #                                            "%Y/%m/%d").strftime("%d.%m.%Y")))
             temp_date = datetime.datetime.strptime((n_event["startTime"].split("T")[0].replace("-", "/")),"%Y/%m/%d").strftime("%d.%m.%Y")
                         #datetime.datetime.strptime((n_event["startTime"].split("T")[0].replace("-", "/")),"%Y/%m/%d").strftime("%d.%m.%Y")
-            block_names_dictionary.update({"BlockName": n_event["blockName"], "date": temp_date})
-            block_names_list.append(block_names_dictionary)
-        block_names_list_sorted = sorted(block_names_list, key=lambda ff: ff['date'])
-        for i in block_names_list_sorted:
-            temp_string = str(block_names_list_sorted[0]["BlockName"]) + str(block_names_list_sorted[0]["date"])
-            self.ui.chosen_block.addItem(temp_string)
-        ###carry on here ###
-        ###carry on here ###
-        ###carry on here ###
+            temp_block_string = str(n_event["blockName"]) + ", " + str(temp_date)
+            print(temp_block_string)
+            t = time.mktime(datetime.datetime.strptime(temp_block_string.split(", ")[1], "%d.%m.%Y").timetuple())
+            print(t)
+            block_names_set.add((str(n_event["blockName"]) + ", " + str(temp_date)))
+
+        print(block_names_set)
+        print(block_names_list)
+        self.ui.chosen_block.addItems(sorted(block_names_set, key=lambda x: datetime.datetime.strptime(x.split(", ")[1],
+                                                                                        "%d.%m.%Y").timetuple()))
+
 
         if upcoming_week_found:
-            upcoming_week_index = self.ui.chosen_block.findText(upcoming_week)
+            upcoming_week_index = self.ui.chosen_block.findText(upcoming_week, QtCore.Qt.MatchFlag.MatchContains)
             self.ui.chosen_block.setCurrentIndex(upcoming_week_index)
             self.ui.chosen_block.setItemText(upcoming_week_index, str(self.ui.chosen_block.currentText()) + " (upcoming block)")
 
