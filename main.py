@@ -78,26 +78,18 @@ class MainWindow(QtWidgets.QMainWindow):
         data = response.json()
         my_events = data["data"]["schedule"]["events"]
         upcoming_week_found = False
-        #for n_event in my_events:
-        #    print(n_event)
 
         for n_event in my_events:
             print(n_event)
-            #if "outcome" in n_event:
-            #    result = n_event["match"]["teams"][0]["result"]["outcome"]
-            #else:
-            #    result = n_event["match"]["teams"][0]["result"]
-            result = n_event["match"]["teams"][0]["result"]["outcome"]
-            print("HAAAAAAAAAAALOOOOOOOOOOOO" + str(result))
             while not upcoming_week_found:
-                if result is None:
+                if n_event["state"] == "unstarted":
                     upcoming_week = n_event["blockName"]
-                    print("found_upcoming_week")
-                    print(upcoming_week)
                     upcoming_week_found = True
+                    print("found it")
                 else:
+                    print("didnt find it")
                     break
-
+            print("Loop done")
             #block_names_set.add(n_event["blockName"] + ", " + str(datetime.datetime.strptime((n_event["startTime"].split("T")[0].replace("-", "/")),
             #                                            "%Y/%m/%d").strftime("%d.%m.%Y")))
             temp_date = datetime.datetime.strptime((n_event["startTime"].split("T")[0].replace("-", "/")),"%Y/%m/%d").strftime("%d.%m.%Y")
@@ -181,7 +173,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 print(team1)
                 team2 = n_event["match"]["teams"][1]["name"]
                 print(team2)
-                result = n_event["match"]["teams"][0]["result"]["outcome"]
+                if n_event["state"] == "unstarted":
+                    result = "TBD"
+                else:
+                    result = n_event["match"]["teams"][0]["result"]["outcome"]
                 print(result)
                 if result == "win":
                     winner = team1
