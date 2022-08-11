@@ -84,16 +84,16 @@ class MainWindow(QtWidgets.QMainWindow):
             while not upcoming_week_found:
                 if n_event["state"] == "unstarted":
                     upcoming_week = n_event["blockName"]
+                    upcoming_week_date = datetime.datetime.strptime((n_event["startTime"].split("T")[0].replace("-", "/")),"%Y/%m/%d").strftime("%d.%m.%Y")
+                    upcoming_week_string = upcoming_week + ", " + upcoming_week_date
+                    print(upcoming_week_string)
                     upcoming_week_found = True
                     print("found it")
                 else:
                     print("didnt find it")
                     break
             print("Loop done")
-            #block_names_set.add(n_event["blockName"] + ", " + str(datetime.datetime.strptime((n_event["startTime"].split("T")[0].replace("-", "/")),
-            #                                            "%Y/%m/%d").strftime("%d.%m.%Y")))
             temp_date = datetime.datetime.strptime((n_event["startTime"].split("T")[0].replace("-", "/")),"%Y/%m/%d").strftime("%d.%m.%Y")
-                        #datetime.datetime.strptime((n_event["startTime"].split("T")[0].replace("-", "/")),"%Y/%m/%d").strftime("%d.%m.%Y")
             temp_block_string = str(n_event["blockName"]) + ", " + str(temp_date)
             print(temp_block_string)
             t = time.mktime(datetime.datetime.strptime(temp_block_string.split(", ")[1], "%d.%m.%Y").timetuple())
@@ -107,7 +107,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
         if upcoming_week_found:
-            upcoming_week_index = self.ui.chosen_block.findText(upcoming_week, QtCore.Qt.MatchFlag.MatchContains)
+            upcoming_week_index = self.ui.chosen_block.findText(upcoming_week_string, QtCore.Qt.MatchFlag.MatchContains)
             self.ui.chosen_block.setCurrentIndex(upcoming_week_index)
             self.ui.chosen_block.setItemText(upcoming_week_index, str(self.ui.chosen_block.currentText()) + " (upcoming block)")
 
@@ -211,7 +211,11 @@ class MainWindow(QtWidgets.QMainWindow):
                         "startTime": str(start_time) + " (UTC + " + str(timezone_offset) + ")", "match": match, \
                         "winner": winner, "week": week, "picture": icon_table}
                 print(temp)
-                schedule.append(temp)
+                print(str(temp["startDate"]).split(", ")[1])
+                if str(temp["startDate"]).split(", ")[1] in chosen_block:
+                    schedule.append(temp)
+                else:
+                    pass
 
         print(schedule)
         print(schedule[0])
