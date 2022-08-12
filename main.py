@@ -34,6 +34,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.tabWidget.setCurrentIndex(0)
         self.ui.show_spoilers.clicked.connect(self.show_spoilers)
         self.ui.get_leagues.clicked.connect(self.get_leagues)
+        self.ui.chosen_block.hide()
 
     def get_leagues(self):
         url = "https://esports-api.lolesports.com/persisted/gw/getLeagues?hl=en-GB"
@@ -53,6 +54,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.chosen_league_combo.addItem(league)
 
         self.ui.chosen_league_combo.currentTextChanged.connect(self.get_block)
+        self.ui.chosen_block.show()
         return leagues_list
 
     def get_block(self):
