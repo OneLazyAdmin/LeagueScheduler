@@ -7,7 +7,7 @@ from ui.mainwindow import Ui_MainWindow
 from PyQt6 import QtGui, QtCore
 from PyQt6.QtGui import QPixmap, QIcon
 
-# non-changing variable
+# These variables and need to be declared before the rest of the program starts
 apikey = '0TvQnueqKa5mxJntVWt0w4LpLfEkrV1Ta8rQBb9Z'
 schedule = []
 leagues_list = []
@@ -27,12 +27,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.ui.get_schedule.hide()
-        self.ui.show_spoilers.hide()
         self.ui.get_schedule.clicked.connect(self.get_schedule)
+        self.ui.show_spoilers.hide()
+        self.ui.show_spoilers.clicked.connect(self.show_spoilers)
         self.ui.timezone.addItems(pytz.all_timezones)
         self.ui.get_timeoffset.clicked.connect(self.calculate_timezone)
         self.ui.tabWidget.setCurrentIndex(0)
-        self.ui.show_spoilers.clicked.connect(self.show_spoilers)
         self.ui.get_leagues.clicked.connect(self.get_leagues)
         self.ui.chosen_block.hide()
 
@@ -81,10 +81,13 @@ class MainWindow(QtWidgets.QMainWindow):
                         (n_event["startTime"].split("T")[0].replace("-", "/")), "%Y/%m/%d").strftime("%d.%m.%Y")
                     upcoming_week_string = upcoming_week + ", " + upcoming_week_date
                     upcoming_week_found = True
+                # elif n_event["state"] == "inProgress":
+                #    pass
                 else:
                     break
             temp_date = datetime.datetime.strptime((n_event["startTime"].split("T")[0].replace("-", "/")),
                                                    "%Y/%m/%d").strftime("%d.%m.%Y")
+            print(n_event)
             block_names_set.add((str(n_event["blockName"]) + ", " + str(temp_date)))
         self.ui.chosen_block.addItems(sorted(block_names_set, key=lambda x: datetime.datetime.strptime
         (x.split(", ")[1], "%d.%m.%Y").timetuple()))
@@ -95,6 +98,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.chosen_block.setItemText(upcoming_week_index,
                                              str(self.ui.chosen_block.currentText()) + " (upcoming block)")
         self.ui.get_schedule.show()
+
     def calculate_timezone(self):
         timezone_offset = datetime.datetime.now(
             pytz.timezone(self.ui.timezone.currentText())).utcoffset().total_seconds() / 60 / 60
