@@ -187,7 +187,8 @@ class MainWindow(QtWidgets.QMainWindow):
                         schedule.append(temp)
                     else:
                         pass
-        os.remove("image_name_super_unlikely.png")
+        if os.path.exists("image_name_super_unlikely.png"):
+            os.remove("image_name_super_unlikely.png")
         counter = 0
         for item in schedule:
             table_rows = self.ui.schedule_table.rowCount()
