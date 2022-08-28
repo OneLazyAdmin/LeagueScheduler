@@ -126,6 +126,6 @@ def run(league_name):
 #print(run("LCK"))
 
 df = run("LEC")
-with open('./schedule.json', 'w') as f:
+with open('../schedule.json', 'w') as f:
     json.dump(df,f)
 
