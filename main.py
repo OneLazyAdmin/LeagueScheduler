@@ -4,8 +4,10 @@ import datetime
 import pytz
 from qtpy import QtWidgets
 from ui.mainwindow import Ui_MainWindow
-from PyQt6 import QtGui, QtCore
-from PyQt6.QtGui import QPixmap, QIcon
+#from PyQt6 import QtGui, QtCore
+#from PyQt6.QtGui import QPixmap, QIcon
+from PyQt5 import QtGui, QtCore
+from PyQt5.QtGui import QPixmap, QIcon
 
 # These variables and need to be declared before the rest of the program starts
 apikey = '0TvQnueqKa5mxJntVWt0w4LpLfEkrV1Ta8rQBb9Z'
