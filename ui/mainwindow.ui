@@ -246,7 +246,13 @@
      <string>League Scheduler</string>
     </property>
    </widget>
+   <widget class="QMenu" name="menutest">
+    <property name="title">
+     <string>test</string>
+    </property>
+   </widget>
    <addaction name="menuLeague_Scheduler"/>
+   <addaction name="menutest"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
