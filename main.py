@@ -26,7 +26,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("Scheduler")
+        self.setWindowTitle("LeagueScheduler")
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.ui.get_schedule.hide()
@@ -90,8 +90,8 @@ class MainWindow(QtWidgets.QMainWindow):
                     break
             temp_date = datetime.datetime.strptime((n_event["startTime"].split("T")[0].replace("-", "/")),
                                                    "%Y/%m/%d").strftime("%d.%m.%Y")
-            if n_event["state"] == "inProgress":
-                continue
+            #if n_event["state"] == "inProgress":
+            #    continue
             block_names_set.add((str(n_event["blockName"]) + ", " + str(temp_date)))
         self.ui.chosen_block.addItems(sorted(block_names_set, key=lambda x: datetime.datetime.strptime
         (x.split(", ")[1], "%d.%m.%Y").timetuple()))
