@@ -1,4 +1,5 @@
 import sys
+import os
 import requests
 import datetime
 import pytz
@@ -154,21 +155,21 @@ class MainWindow(QtWidgets.QMainWindow):
                         result = n_event["match"]["teams"][0]["result"]["outcome"]
                     if result == "win":
                         winner = team1
-                        f = open('image.png', 'wb')
+                        f = open('image_name_super_unlikely.png', 'wb')
                         url_logo = n_event["match"]["teams"][0]["image"]
                         f.write(requests.get(url_logo).content)
                         f.close()
-                        pixmap = QPixmap("image.png")
+                        pixmap = QPixmap("image_name_super_unlikely.png")
                         icon = QIcon(pixmap)
                         icon_table = QtWidgets.QTableWidgetItem()
                         icon_table.setIcon(icon)
                     elif result == "loss":
                         winner = team2
-                        f = open('image.png', 'wb')
+                        f = open('image_name_super_unlikely.png', 'wb')
                         url_logo = n_event["match"]["teams"][1]["image"]
                         f.write(requests.get(url_logo).content)
                         f.close()
-                        pixmap = QPixmap("image.png")
+                        pixmap = QPixmap("image_name_super_unlikely.png")
                         icon = QIcon(pixmap)
                         icon_table = QtWidgets.QTableWidgetItem()
                         icon_table.setIcon(icon)
@@ -186,6 +187,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         schedule.append(temp)
                     else:
                         pass
+        os.remove("image_name_super_unlikely.png")
         counter = 0
         for item in schedule:
             table_rows = self.ui.schedule_table.rowCount()
