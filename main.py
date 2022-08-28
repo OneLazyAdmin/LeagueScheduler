@@ -89,7 +89,8 @@ class MainWindow(QtWidgets.QMainWindow):
                     break
             temp_date = datetime.datetime.strptime((n_event["startTime"].split("T")[0].replace("-", "/")),
                                                    "%Y/%m/%d").strftime("%d.%m.%Y")
-            print(n_event)
+            if n_event["state"] == "inProgress":
+                continue
             block_names_set.add((str(n_event["blockName"]) + ", " + str(temp_date)))
         self.ui.chosen_block.addItems(sorted(block_names_set, key=lambda x: datetime.datetime.strptime
         (x.split(", ")[1], "%d.%m.%Y").timetuple()))
@@ -133,56 +134,58 @@ class MainWindow(QtWidgets.QMainWindow):
         chosen_block = self.ui.chosen_block.currentText()
         self.ui.timezone_title.pixmap()
         for n_event in my_events:
-            if n_event["blockName"] in chosen_block:
-                start_timestamp = datetime.datetime.strptime((n_event["startTime"].replace("T", " ").split("Z")[0]),
+            key = "blockName"
+            if n_event.get(key) is not None:
+                if n_event["blockName"] in chosen_block:
+                    start_timestamp = datetime.datetime.strptime((n_event["startTime"].replace("T", " ").split("Z")[0]),
                                                              "%Y-%m-%d %H:%M:%S")
-                timezone_offset = datetime.timedelta(hours=self.calculate_timezone())
-                start_timestamp = start_timestamp + timezone_offset
-                start_time = start_timestamp.time()
-                start_date = datetime.datetime.strptime((n_event["startTime"].split("T")[0].replace("-", "/")),
+                    timezone_offset = datetime.timedelta(hours=self.calculate_timezone())
+                    start_timestamp = start_timestamp + timezone_offset
+                    start_time = start_timestamp.time()
+                    start_date = datetime.datetime.strptime((n_event["startTime"].split("T")[0].replace("-", "/")),
                                                         "%Y/%m/%d").strftime("%d.%m.%Y")
-                day_of_week = self.calculate_day_of_week(start_timestamp)
-                week = n_event["blockName"]
-                team1 = n_event["match"]["teams"][0]["name"]
-                team2 = n_event["match"]["teams"][1]["name"]
-                if n_event["state"] == "unstarted":
-                    result = "TBD"
-                else:
-                    result = n_event["match"]["teams"][0]["result"]["outcome"]
-                if result == "win":
-                    winner = team1
-                    f = open('image.png', 'wb')
-                    url_logo = n_event["match"]["teams"][0]["image"]
-                    f.write(requests.get(url_logo).content)
-                    f.close()
-                    pixmap = QPixmap("image.png")
-                    icon = QIcon(pixmap)
-                    icon_table = QtWidgets.QTableWidgetItem()
-                    icon_table.setIcon(icon)
-                elif result == "loss":
-                    winner = team2
-                    f = open('image.png', 'wb')
-                    url_logo = n_event["match"]["teams"][1]["image"]
-                    f.write(requests.get(url_logo).content)
-                    f.close()
-                    pixmap = QPixmap("image.png")
-                    icon = QIcon(pixmap)
-                    icon_table = QtWidgets.QTableWidgetItem()
-                    icon_table.setIcon(icon)
-                else:
-                    winner = "TBD"
-                    pixmap = QPixmap("Nami.png")
-                    icon = QIcon(pixmap)
-                    icon_table = QtWidgets.QTableWidgetItem()
-                    icon_table.setIcon(icon)
-                match = team1 + " vs. " + team2
-                temp = {"startDate": day_of_week + ", " + start_date,
-                        "startTime": str(start_time) + " (UTC + " + str(timezone_offset) + ")", "match": match,
-                        "winner": winner, "week": week, "picture": icon_table}
-                if str(temp["startDate"]).split(", ")[1] in chosen_block:
-                    schedule.append(temp)
-                else:
-                    pass
+                    day_of_week = self.calculate_day_of_week(start_timestamp)
+                    week = n_event["blockName"]
+                    team1 = n_event["match"]["teams"][0]["name"]
+                    team2 = n_event["match"]["teams"][1]["name"]
+                    if n_event["state"] == "unstarted":
+                        result = "TBD"
+                    else:
+                        result = n_event["match"]["teams"][0]["result"]["outcome"]
+                    if result == "win":
+                        winner = team1
+                        f = open('image.png', 'wb')
+                        url_logo = n_event["match"]["teams"][0]["image"]
+                        f.write(requests.get(url_logo).content)
+                        f.close()
+                        pixmap = QPixmap("image.png")
+                        icon = QIcon(pixmap)
+                        icon_table = QtWidgets.QTableWidgetItem()
+                        icon_table.setIcon(icon)
+                    elif result == "loss":
+                        winner = team2
+                        f = open('image.png', 'wb')
+                        url_logo = n_event["match"]["teams"][1]["image"]
+                        f.write(requests.get(url_logo).content)
+                        f.close()
+                        pixmap = QPixmap("image.png")
+                        icon = QIcon(pixmap)
+                        icon_table = QtWidgets.QTableWidgetItem()
+                        icon_table.setIcon(icon)
+                    else:
+                        winner = "TBD"
+                        pixmap = QPixmap("Nami.png")
+                        icon = QIcon(pixmap)
+                        icon_table = QtWidgets.QTableWidgetItem()
+                        icon_table.setIcon(icon)
+                    match = team1 + " vs. " + team2
+                    temp = {"startDate": day_of_week + ", " + start_date,
+                            "startTime": str(start_time) + " (UTC + " + str(timezone_offset) + ")", "match": match,
+                            "winner": winner, "week": week, "picture": icon_table}
+                    if str(temp["startDate"]).split(", ")[1] in chosen_block:
+                        schedule.append(temp)
+                    else:
+                        pass
         counter = 0
         for item in schedule:
             table_rows = self.ui.schedule_table.rowCount()
