@@ -5,7 +5,7 @@ block_cipher = None
 
 
 a = Analysis(
-    ['C:\\Users\\Tassilo\\Documents\\Python\\Projekte\\LeagueScheduler\\main.py'],
+    ['main.py'],
     pathex=[],
     binaries=[],
     datas=[],
