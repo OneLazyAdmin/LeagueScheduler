@@ -55,9 +55,9 @@ class MainWindow(QtWidgets.QMainWindow):
         leagues_list_only_names.sort()
         for league in leagues_list_only_names:
             self.ui.chosen_league_combo.addItem(league)
-
+        self.ui.chosen_league_combo.setCurrentIndex(-1)
         self.ui.chosen_league_combo.currentTextChanged.connect(self.get_block)
-        self.ui.chosen_block.show()
+        self.ui.chosen_league_combo.currentTextChanged.connect(self.ui.chosen_block.show)
         return leagues_list
 
     def get_block(self):
@@ -134,6 +134,12 @@ class MainWindow(QtWidgets.QMainWindow):
         my_events = data["data"]["schedule"]["events"]
         chosen_block = self.ui.chosen_block.currentText()
         self.ui.timezone_title.pixmap()
+        self.ui.progressBar.setValue(10)
+        counter = 1
+        for n_event in my_events:
+            if n_event["blockName"] in chosen_block:
+                counter = counter + 1
+        progress_increment = int(100 / counter)
         for n_event in my_events:
             key = "blockName"
             if n_event.get(key) is not None:
@@ -187,9 +193,13 @@ class MainWindow(QtWidgets.QMainWindow):
                         schedule.append(temp)
                     else:
                         pass
+                    progress = self.ui.progressBar.value() + progress_increment
+                    self.ui.progressBar.setValue(progress)
+
         if os.path.exists("image_name_super_unlikely.png"):
             os.remove("image_name_super_unlikely.png")
         counter = 0
+
         for item in schedule:
             table_rows = self.ui.schedule_table.rowCount()
             self.ui.schedule_table.insertRow(table_rows)
@@ -203,6 +213,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.schedule_table.hideColumn(4)
             counter = counter + 1
         self.ui.schedule_table.resizeColumnsToContents()
+        self.ui.progressBar.setValue(100)
         self.ui.show_spoilers.show()
 
 
